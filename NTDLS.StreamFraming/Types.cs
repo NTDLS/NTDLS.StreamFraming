@@ -2,7 +2,7 @@
 
 namespace NTDLS.StreamFraming
 {
-    internal class Types
+    public class Types
     {
         public delegate void ProcessFrameNotification(IFramePayloadNotification payload);
 

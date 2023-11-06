@@ -8,7 +8,7 @@ namespace NTDLS.StreamFraming
     /// </summary>
     [Serializable]
     [ProtoContract]
-    internal class Frame
+    public class Frame
     {
         [ProtoMember(1)]
         public Guid Id { get; set; } = Guid.NewGuid();
