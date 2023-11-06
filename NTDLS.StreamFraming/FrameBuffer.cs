@@ -1,6 +1,9 @@
 ﻿namespace NTDLS.StreamFraming
 {
-    internal class FrameBuffer
+    /// <summary>
+    /// Auto-resizing frame buffer for stream frame re-assembly.
+    /// </summary>
+    public class FrameBuffer
     {
         /// <summary>
         /// The number of bytes in the current receive buffer.
