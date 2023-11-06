@@ -16,12 +16,10 @@ namespace NTDLS.StreamFraming
     /// TCP packets can be fragmented or combined. The packetizer rebuilds what was originally
     /// sent via the TCP send() call, provides compression and also performs a CRC check.
     /// </summary>
-    internal static class Framing
+    public static class Framing
     {
         private static readonly CriticalResource<Dictionary<string, MethodInfo>> _reflectioncache = new();
-        private static readonly List<QueryAwaitingReply> _queriesAwaitingReplies = new();
-
-        public delegate byte[] EncryptionProvider(byte[] buffer);
+        private static readonly List<QueryAwaitingReply> _queriesAwaitingReplies = n  public delegate byte[] EncryptionProvider(byte[] buffer);
 
         #region Extension methods.
 
