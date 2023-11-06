@@ -4,6 +4,7 @@
     <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
     <Title>NTDLS.StreamFraming</Title>
     <Authors>NetworkDLS</Authors>
+    <Nullable>Enable</Nullable>
     <Company>NetworkDLS</Company>
     <Description>Stream wrapper (typically TCPIP/NetworkStream) that enables reliable framing, compression, optional encryption and two way communication.</Description>
     <Copyright>Copyright © 2023 NetworkDLS</Copyright>
@@ -11,9 +12,9 @@
     <RepositoryUrl>https://github.com/NTDLS/NTDLS.StreamFraming</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageReleaseNotes>Visibility framing extension methods.</PackageReleaseNotes>
-    <AssemblyVersion>1.0.2</AssemblyVersion>
-    <FileVersion>1.0.2</FileVersion>
-    <VersionPrefix>1.0.2</VersionPrefix>
+    <AssemblyVersion>1.0.3</AssemblyVersion>
+    <FileVersion>1.0.3</FileVersion>
+    <VersionPrefix>1.0.3</VersionPrefix>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageTags>stream;framing;tcpip;io;</PackageTags>
     <IncludeSymbols>False</IncludeSymbols>
