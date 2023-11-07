@@ -4,9 +4,9 @@ namespace NTDLS.StreamFraming
 {
     public class Types
     {
-        public delegate void ProcessFrameNotification(IFramePayloadNotification payload);
+        public delegate void ProcessFrameNotification(IFrameNotification payload);
 
-        public delegate IFramePayloadQueryReply ProcessFrameQuery(IFramePayloadQuery payload);
+        public delegate IFrameQueryReply ProcessFrameQuery(IFrameQuery payload);
 
         internal static class NtFrameDefaults
         {

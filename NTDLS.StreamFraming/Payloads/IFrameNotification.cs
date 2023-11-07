@@ -1,6 +1,6 @@
 ﻿namespace NTDLS.StreamFraming.Payloads
 {
-    public interface IFramePayloadQueryReply : IFramePayload
+    public interface IFrameNotification : IStreamFrame
     {
     }
 }

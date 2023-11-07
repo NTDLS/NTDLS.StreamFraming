@@ -11,10 +11,12 @@
     <PackageProjectUrl>https://github.com/NTDLS/NTDLS.StreamFraming</PackageProjectUrl>
     <RepositoryUrl>https://github.com/NTDLS/NTDLS.StreamFraming</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
-    <PackageReleaseNotes>Visibility framing extension methods.</PackageReleaseNotes>
-    <AssemblyVersion>1.0.3</AssemblyVersion>
-    <FileVersion>1.0.3</FileVersion>
-    <VersionPrefix>1.0.3</VersionPrefix>
+    <PackageReleaseNotes>
+      Renames and more generic extension methods.
+    </PackageReleaseNotes>
+    <AssemblyVersion>1.0.4</AssemblyVersion>
+    <FileVersion>1.0.4</FileVersion>
+    <VersionPrefix>1.0.4</VersionPrefix>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageTags>stream;framing;tcpip;io;</PackageTags>
     <IncludeSymbols>False</IncludeSymbols>

@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net.Sockets;
 using System.Reflection;
 using System.Threading.Tasks;
 using static NTDLS.StreamFraming.Types;
@@ -35,7 +34,7 @@ namespace NTDLS.StreamFraming
         /// <param name="encryptionProvider"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public static bool ReadAndProcessFrames(this NetworkStream stream, FrameBuffer frameBuffer,
+        public static bool ReadAndProcessFrames(this Stream stream, FrameBuffer frameBuffer,
             ProcessFrameNotification processNotificationCallback, ProcessFrameQuery processFrameQueryCallback,
             EncryptionProvider? encryptionProvider = null)
         {
@@ -59,7 +58,7 @@ namespace NTDLS.StreamFraming
         /// <summary>
         /// Writes a query to the stream, expects a reply.
         /// </summary>
-        public static async Task<T> WriteQuery<T>(this Stream stream, IFramePayloadQuery payload, int queryTimeout = -1, EncryptionProvider? encryptionProvider = null)
+        public static async Task<T> WriteQuery<T>(this Stream stream, IFrameQuery payload, int queryTimeout = -1, EncryptionProvider? encryptionProvider = null)
         {
             if (stream == null)
             {
@@ -106,7 +105,7 @@ namespace NTDLS.StreamFraming
         /// <summary>
         /// Writes a reply to the stream in reply to a stream query.
         /// </summary>
-        public static void WriteReply(this Stream stream, Frame queryFrame, IFramePayloadQueryReply payload, EncryptionProvider? encryptionProvider = null)
+        public static void WriteReply(this Stream stream, Frame queryFrame, IFrameQueryReply payload, EncryptionProvider? encryptionProvider = null)
         {
             if (stream == null)
             {
@@ -126,7 +125,7 @@ namespace NTDLS.StreamFraming
         /// <summary>
         /// Sends a one-time fire-and-forget notification to the stream.
         /// </summary>
-        public static void WriteNotification(this NetworkStream stream, IFramePayloadNotification payload, EncryptionProvider? encryptionProvider = null)
+        public static void WriteNotification(this Stream stream, IFrameNotification payload, EncryptionProvider? encryptionProvider = null)
         {
             if (stream == null)
             {
@@ -187,7 +186,7 @@ namespace NTDLS.StreamFraming
             frameBuffer.FrameBuilderLength = 0;
         }
 
-        private static void ProcessFrameBuffer(this NetworkStream stream, FrameBuffer frameBuffer, ProcessFrameNotification processNotificationCallback,
+        private static void ProcessFrameBuffer(this Stream stream, FrameBuffer frameBuffer, ProcessFrameNotification processNotificationCallback,
              ProcessFrameQuery processFrameQueryCallback, EncryptionProvider? encryptionProvider = null)
         {
             if (frameBuffer.FrameBuilderLength + frameBuffer.ReceiveBufferUsed >= frameBuffer.FrameBuilder.Length)
@@ -254,19 +253,19 @@ namespace NTDLS.StreamFraming
 
                 var payload = ExtractFramePayload(frame);
 
-                if (payload is IFramePayloadQuery query)
+                if (payload is IFrameQuery query)
                 {
                     var replyPayload = processFrameQueryCallback(query);
                     stream.WriteReply(frame, replyPayload);
                 }
-                else if (payload is IFramePayloadQueryReply reply)
+                else if (payload is IFrameQueryReply reply)
                 {
                     // A reply to a query was received, we need to find the waiting query - set the reply payload data and trigger the wait event.
                     var waitingQuery = _queriesAwaitingReplies.Where(o => o.FrameId == frame.Id).Single();
                     waitingQuery.ReplyPayload = reply;
                     waitingQuery.WaitEvent.Set();
                 }
-                else if (payload is IFramePayloadNotification notification)
+                else if (payload is IFrameNotification notification)
                 {
                     processNotificationCallback(notification);
                 }
@@ -277,7 +276,7 @@ namespace NTDLS.StreamFraming
             }
         }
 
-        private static IFramePayload ExtractFramePayload(Frame frame)
+        private static IStreamFrame ExtractFramePayload(Frame frame)
         {
             var genericToObjectMethod = _reflectioncache.Use((o) =>
             {
@@ -290,7 +289,7 @@ namespace NTDLS.StreamFraming
 
             if (genericToObjectMethod != null)
             {
-                return (IFramePayload?)genericToObjectMethod.Invoke(null, new object[] { frame.Payload })
+                return (IStreamFrame?)genericToObjectMethod.Invoke(null, new object[] { frame.Payload })
                     ?? throw new Exception($"ExtractFramePayload: Payload can not be null.");
             }
 
@@ -309,7 +308,7 @@ namespace NTDLS.StreamFraming
 
             _reflectioncache.Use((o) => o.TryAdd(frame.EnclosedPayloadType, genericToObjectMethod));
 
-            return (IFramePayload?)genericToObjectMethod.Invoke(null, new object[] { frame.Payload })
+            return (IStreamFrame?)genericToObjectMethod.Invoke(null, new object[] { frame.Payload })
                 ?? throw new Exception($"ExtractFramePayload: Payload can not be null.");
         }
     }
