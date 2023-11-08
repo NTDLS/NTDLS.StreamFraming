@@ -35,7 +35,7 @@ namespace NTDLS.StreamFraming
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
         public static bool ReadAndProcessFrames(this Stream stream, FrameBuffer frameBuffer,
-            ProcessFrameNotification processNotificationCallback, ProcessFrameQuery processFrameQueryCallback,
+            ProcessFrameNotification processNotificationCallback, ProcessFrameQuery? processFrameQueryCallback = null,
             EncryptionProvider? encryptionProvider = null)
         {
             if (stream == null)
@@ -187,7 +187,7 @@ namespace NTDLS.StreamFraming
         }
 
         private static void ProcessFrameBuffer(this Stream stream, FrameBuffer frameBuffer, ProcessFrameNotification processNotificationCallback,
-             ProcessFrameQuery processFrameQueryCallback, EncryptionProvider? encryptionProvider = null)
+             ProcessFrameQuery? processFrameQueryCallback, EncryptionProvider? encryptionProvider = null)
         {
             if (frameBuffer.FrameBuilderLength + frameBuffer.ReceiveBufferUsed >= frameBuffer.FrameBuilder.Length)
             {
@@ -255,6 +255,10 @@ namespace NTDLS.StreamFraming
 
                 if (payload is IFrameQuery query)
                 {
+                    if (processFrameQueryCallback == null)
+                    {
+                        throw new Exception("ProcessFrameBuffer: A query handler was not supplied.");
+                    }
                     var replyPayload = processFrameQueryCallback(query);
                     stream.WriteReply(frame, replyPayload);
                 }
