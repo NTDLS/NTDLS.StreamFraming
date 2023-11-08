@@ -297,11 +297,6 @@ namespace NTDLS.StreamFraming
                     ?? throw new Exception($"ExtractFramePayload: Payload can not be null.");
             }
 
-            AppDomain currentDomain = AppDomain.CurrentDomain;
-
-            // Get a list of loaded assemblies in the current application domain
-            Assembly[] loadedAssemblies = currentDomain.GetAssemblies();
-
             var genericType = Type.GetType(frame.EnclosedPayloadType)
                 ?? throw new Exception($"ExtractFramePayload: Unknown payload type {frame.EnclosedPayloadType}.");
 
