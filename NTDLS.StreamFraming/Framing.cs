@@ -17,7 +17,7 @@ namespace NTDLS.StreamFraming
     /// </summary>
     public static class Framing
     {
-        private static readonly CriticalResource<Dictionary<string, MethodInfo>> _reflectioncache = new();
+        private static readonly PessimisticSemaphore<Dictionary<string, MethodInfo>> _reflectioncache = new();
         private static readonly List<QueryAwaitingReply> _queriesAwaitingReplies = new();
 
         public delegate byte[] EncryptionProvider(byte[] buffer);

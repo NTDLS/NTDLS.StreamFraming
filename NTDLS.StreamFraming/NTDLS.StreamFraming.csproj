@@ -12,11 +12,11 @@
     <RepositoryUrl>https://github.com/NTDLS/NTDLS.StreamFraming</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageReleaseNotes>
-      Made query handler optional.
+      Updated semaphore pacakge.
     </PackageReleaseNotes>
-    <AssemblyVersion>1.0.5</AssemblyVersion>
-    <FileVersion>1.0.5</FileVersion>
-    <VersionPrefix>1.0.5</VersionPrefix>
+    <AssemblyVersion>1.0.6</AssemblyVersion>
+    <FileVersion>1.0.6</FileVersion>
+    <VersionPrefix>1.0.6</VersionPrefix>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageTags>stream;framing;tcpip;io;</PackageTags>
     <IncludeSymbols>False</IncludeSymbols>
@@ -47,7 +47,7 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="NTDLS.Semaphore" Version="1.5.1" />
+    <PackageReference Include="NTDLS.Semaphore" Version="2.2.2" />
     <PackageReference Include="protobuf-net" Version="3.2.26" />
   </ItemGroup>
 
