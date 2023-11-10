@@ -12,6 +12,7 @@
     <RepositoryUrl>https://github.com/NTDLS/NTDLS.StreamFraming</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageReleaseNotes>
+      Added byte payload framing.
       Updated FrameBuffer for auto-sizing.
       Added a documentation.
     </PackageReleaseNotes>
