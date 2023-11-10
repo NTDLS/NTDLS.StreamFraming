@@ -3,7 +3,7 @@
     /// <summary>
     /// All query frames must in herit from this interface and be json serializable.
     /// </summary>
-    public interface IFrameQuery : IStreamFrame
+    public interface IFramePayloadQuery : IFramePayload
     {
     }
 }

@@ -118,10 +118,7 @@ namespace TestHarness
                         while (tcpClient.Connected)
                         {
                             string text = $"Hello Client! The time is: {DateTime.Now.ToLongTimeString()}.";
-
-                            //Assemble a message frame and write it to the stream:
-                            tcpStream.WriteNotification(new MyMessage(text));
-
+                            tcpStream.WriteNotificationFrame(new MyMessage(text));
                             Thread.Sleep(1000);
                         }
                         tcpStream.Close();

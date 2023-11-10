@@ -2,7 +2,7 @@
 
 namespace TestHarness.Payloads
 {
-    internal class MyMessage : IFrameNotification
+    internal class MyMessage : IFramePayloadNotification
     {
         public string Text { get; set; }
 

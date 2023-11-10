@@ -16,3 +16,7 @@ TestHarness.Query/obj/
 TestHarness.Simple/bin/
 
 TestHarness.Simple/obj/
+
+TestHarness.Bytes/bin/
+
+TestHarness.Bytes/obj/

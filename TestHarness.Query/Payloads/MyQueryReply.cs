@@ -2,7 +2,7 @@
 
 namespace TestHarness.Payloads
 {
-    internal class MyQueryReply : IFrameQueryReply
+    internal class MyQueryReply : IFramePayloadQueryReply
     {
         public string Text { get; set; }
 

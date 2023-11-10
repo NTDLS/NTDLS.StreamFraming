@@ -64,7 +64,7 @@ namespace TestHarness
             }
         }
 
-        private static void ProcessFrameNotification(IFrameNotification payload)
+        private static void ProcessFrameNotification(IFramePayloadNotification payload)
         {
             //We recevied a message, see if it is of the type "MyMessage".
             if (payload is MyMessage myMessage)
@@ -73,7 +73,7 @@ namespace TestHarness
             }
         }
 
-        private static IFrameQueryReply ProcessFrameQuery(IFrameQuery payload)
+        private static IFramePayloadQueryReply ProcessFrameQuery(IFramePayloadQuery payload)
         {
             //We recevied a message, see if it is of the type "MyQuery", if so reply with the type of MyQueryReply.
             if (payload is MyQuery myQuery)

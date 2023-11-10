@@ -1,5 +1,8 @@
-﻿using ProtoBuf;
+﻿using Newtonsoft.Json;
+using NTDLS.StreamFraming.Payloads;
+using ProtoBuf;
 using System;
+using System.Text;
 
 namespace NTDLS.StreamFraming
 {
@@ -23,9 +26,36 @@ namespace NTDLS.StreamFraming
         public string EnclosedPayloadType { get; set; } = string.Empty;
 
         /// <summary>
-        /// Json serialized user defined payload of the type denoted by EnclosedPayloadType.
+        /// Sometimes we just need to send a byte array without all the overhead of json, thats when we use BytesPayload.
         /// </summary>
         [ProtoMember(3)]
-        public string Payload { get; set; } = string.Empty;
+        public byte[] BytesPayload { get; set; } = Array.Empty<byte>();
+
+        /// <summary>
+        /// Instanciates a frame payload with a serialized payload.
+        /// </summary>
+        /// <param name="framePayload"></param>
+        public Frame(IFramePayload framePayload)
+        {
+            EnclosedPayloadType = framePayload.GetType()?.AssemblyQualifiedName ?? string.Empty;
+            BytesPayload = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(framePayload));
+        }
+
+        /// <summary>
+        /// Instanciates a frame payload using a raw byte array.
+        /// </summary>
+        /// <param name="bytesPayload"></param>
+        public Frame(byte[] bytesPayload)
+        {
+            EnclosedPayloadType = "byte[]";
+            BytesPayload = bytesPayload;
+        }
+
+        /// <summary>
+        /// Instanciates a frame payload.
+        /// </summary>
+        public Frame()
+        {
+        }
     }
 }

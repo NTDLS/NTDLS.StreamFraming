@@ -1,7 +1,7 @@
 ﻿using NTDLS.StreamFraming;
 using System.Net;
 using System.Net.Sockets;
-using TestHarness.Payloads;
+using System.Text;
 
 namespace TestHarness
 {
@@ -120,27 +120,7 @@ namespace TestHarness
                             string text = $"Hello Client! The time is: {DateTime.Now.ToLongTimeString()}.";
 
                             //Assemble a message frame and write it to the stream:
-                            tcpStream.WriteNotificationFrame(new MyMessage(text));
-
-
-                            #region Test query send/receive.
-
-                            tcpStream.WriteQueryFrame<MyQueryReply>(new MyQuery("Hello client!")).ContinueWith((o) =>
-                                {
-                                    if (o.IsCompletedSuccessfully && o.Result != null)
-                                    {
-                                        Console.WriteLine($"Received [QueryReply] from client: '{o.Result.Text}')");
-                                    }
-                                });
-
-                            //In this example, we have to call ReadAndProcessFrames() even though we are not supplying it with any callbacks
-                            //  because it receives the replies from the query that is sent above and routes them to the correct query task handler.
-                            if (tcpStream.ReadAndProcessFrames(frameBuffer) == false)
-                            {
-                                break; //The client disconnected.
-                            }
-
-                            #endregion
+                            tcpStream.WriteBytesFrame(Encoding.UTF8.GetBytes(text));
 
                             Thread.Sleep(1000);
                         }

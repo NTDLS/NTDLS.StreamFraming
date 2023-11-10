@@ -16,6 +16,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestHarness.Query", "TestHa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestHarness.Simple", "TestHarness.Simple\TestHarness.Simple.csproj", "{D40AB1CF-E694-4CFD-8C62-F9CC3114EDCF}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestHarness.Bytes", "TestHarness.Bytes\TestHarness.Bytes.csproj", "{77C66901-933C-411C-9F7F-91E130F80396}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -34,6 +36,10 @@ Global
 		{D40AB1CF-E694-4CFD-8C62-F9CC3114EDCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D40AB1CF-E694-4CFD-8C62-F9CC3114EDCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D40AB1CF-E694-4CFD-8C62-F9CC3114EDCF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77C66901-933C-411C-9F7F-91E130F80396}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77C66901-933C-411C-9F7F-91E130F80396}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77C66901-933C-411C-9F7F-91E130F80396}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77C66901-933C-411C-9F7F-91E130F80396}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -41,6 +47,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{61C47885-F844-4B80-A85D-DA64E91F5F9F} = {545C52D4-ED75-45F3-BB0B-33A560B86071}
 		{D40AB1CF-E694-4CFD-8C62-F9CC3114EDCF} = {545C52D4-ED75-45F3-BB0B-33A560B86071}
+		{77C66901-933C-411C-9F7F-91E130F80396} = {545C52D4-ED75-45F3-BB0B-33A560B86071}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {592FEDC1-8857-408A-B275-E839EC72FF95}

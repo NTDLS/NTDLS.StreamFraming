@@ -1,7 +1,8 @@
 ﻿using NTDLS.StreamFraming;
 using NTDLS.StreamFraming.Payloads;
+using NTDLS.StreamFraming.Payloads.Concrete;
 using System.Net.Sockets;
-using TestHarness.Payloads;
+using System.Text;
 
 namespace TestHarness
 {
@@ -67,9 +68,10 @@ namespace TestHarness
         private static void ProcessFrameNotification(IFramePayloadNotification payload)
         {
             //We recevied a message, see if it is of the type "MyMessage".
-            if (payload is MyMessage myMessage)
+            if (payload is FramePayloadBytes frameNotificationBytes)
             {
-                Console.WriteLine($"Received [Notification] from server: '{myMessage.Text}'");
+                var text = Encoding.UTF8.GetString(frameNotificationBytes.Bytes);
+                Console.WriteLine($"Received [Notification] from server: '{text}'");
             }
         }
     }

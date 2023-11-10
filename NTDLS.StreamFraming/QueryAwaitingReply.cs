@@ -8,6 +8,6 @@ namespace NTDLS.StreamFraming
     {
         public Guid FrameId { get; set; }
         public AutoResetEvent WaitEvent { get; set; } = new(false);
-        public IFrameQueryReply? ReplyPayload { get; set; }
+        public IFramePayloadQueryReply? ReplyPayload { get; set; }
     }
 }
