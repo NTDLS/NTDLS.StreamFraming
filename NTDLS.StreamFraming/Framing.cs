@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using NTDLS.Semaphore;
+﻿using NTDLS.Semaphore;
 using NTDLS.StreamFraming.Payloads;
 using NTDLS.StreamFraming.Payloads.Concrete;
 using System;
@@ -78,30 +77,30 @@ namespace NTDLS.StreamFraming
         /// </summary>
         /// <typeparam name="T">The type of the expected reply payload.</typeparam>
         /// <param name="stream">The open stream that will be written to.</param>
-        /// <param name="payload">The query payload that will be written to the stream.</param>
+        /// <param name="framePayload">The query payload that will be written to the stream.</param>
         /// <param name="queryTimeout">The number of milliseconds to wait on a reply to the query.</param>
         /// <param name="encryptionProvider">An optional callback that is called to allow for manipulation of bytes before they are framed.</param>
         /// <returns>Returns the reply payload that is written to the stream from the recipient of the query.</returns>
         /// <exception cref="Exception"></exception>
-        public static async Task<T> WriteQueryFrame<T>(this Stream stream, IFramePayloadQuery payload, int queryTimeout = -1, EncryptionProviderCallback? encryptionProvider = null)
+        public static async Task<T> WriteQueryFrame<T>(this Stream stream, IFramePayloadQuery framePayload, int queryTimeout = -1, EncryptionProviderCallback? encryptionProvider = null)
         {
             if (stream == null)
             {
                 throw new Exception("SendStreamFramePayload stream can not be null.");
             }
 
-            var frame = new Frame(payload);
+            var FrameBody = new FrameBody(framePayload);
 
             var queryAwaitingReply = new QueryAwaitingReply()
             {
-                FrameId = frame.Id,
+                FrameBodyId = FrameBody.Id,
             };
 
             _queriesAwaitingReplies.Add(queryAwaitingReply);
 
             return await Task.Run(() =>
             {
-                var frameBytes = AssembleFrame(frame, encryptionProvider);
+                var frameBytes = AssembleFrame(FrameBody, encryptionProvider);
                 stream.Write(frameBytes, 0, frameBytes.Length);
 
                 //Wait for a reply. When a reply is received, it will be routed to the correct query via ApplyQueryReply().
@@ -127,23 +126,23 @@ namespace NTDLS.StreamFraming
         /// Writes a reply to the stream in reply to a stream query.
         /// </summary>
         /// <param name="stream">The open stream that will be written to.</param>
-        /// <param name="queryFrame">The query frame that was received and that we are responding to.</param>
-        /// <param name="payload">The query reply payload.</param>
+        /// <param name="queryFrameBody">The query frame that was received and that we are responding to.</param>
+        /// <param name="framePayload">The query reply payload.</param>
         /// <param name="encryptionProvider">An optional callback that is called to allow for manipulation of bytes before they are framed.</param>
         /// <exception cref="Exception"></exception>
-        public static void WriteReplyFrame(this Stream stream, Frame queryFrame, IFramePayloadQueryReply payload, EncryptionProviderCallback? encryptionProvider = null)
+        public static void WriteReplyFrame(this Stream stream, FrameBody queryFrameBody, IFramePayloadQueryReply framePayload, EncryptionProviderCallback? encryptionProvider = null)
         {
             if (stream == null)
             {
                 throw new Exception("SendStreamFramePayload stream can not be null.");
             }
 
-            var frame = new Frame(payload)
+            var frameBody = new FrameBody(framePayload)
             {
-                Id = queryFrame.Id
+                Id = queryFrameBody.Id
             };
 
-            var frameBytes = AssembleFrame(frame, encryptionProvider);
+            var frameBytes = AssembleFrame(frameBody, encryptionProvider);
             stream.Write(frameBytes, 0, frameBytes.Length);
         }
 
@@ -151,19 +150,19 @@ namespace NTDLS.StreamFraming
         /// Sends a one-time fire-and-forget notification to the stream.
         /// </summary>
         /// <param name="stream">The open stream that will be written to.</param>
-        /// <param name="payload">The notification payload that will be written to the stream.</param>
+        /// <param name="framePayload">The notification payload that will be written to the stream.</param>
         /// <param name="encryptionProvider">An optional callback that is called to allow for manipulation of bytes before they are framed.</param>
         /// <exception cref="Exception"></exception>
-        public static void WriteNotificationFrame(this Stream stream, IFramePayloadNotification payload, EncryptionProviderCallback? encryptionProvider = null)
+        public static void WriteNotificationFrame(this Stream stream, IFramePayloadNotification framePayload, EncryptionProviderCallback? encryptionProvider = null)
         {
             if (stream == null)
             {
                 throw new Exception("SendStreamFramePayload stream can not be null.");
             }
 
-            var frame = new Frame(payload);
+            var frameBody = new FrameBody(framePayload);
 
-            var frameBytes = AssembleFrame(frame, encryptionProvider);
+            var frameBytes = AssembleFrame(frameBody, encryptionProvider);
             stream.Write(frameBytes, 0, frameBytes.Length);
         }
 
@@ -172,41 +171,41 @@ namespace NTDLS.StreamFraming
         /// When a raw byte array is use, all json serilization is skipped and checks for this payload type are prioritized for performance.
         /// </summary>
         /// <param name="stream">The open stream that will be written to.</param>
-        /// <param name="payload">The bytes will make up the body of the frame which is written to the stream.</param>
+        /// <param name="framePayload">The bytes will make up the body of the frame which is written to the stream.</param>
         /// <param name="encryptionProvider">An optional callback that is called to allow for manipulation of bytes before they are framed.</param>
         /// <exception cref="Exception"></exception>
-        public static void WriteBytesFrame(this Stream stream, byte[] payload, EncryptionProviderCallback? encryptionProvider = null)
+        public static void WriteBytesFrame(this Stream stream, byte[] framePayload, EncryptionProviderCallback? encryptionProvider = null)
         {
             if (stream == null)
             {
                 throw new Exception("SendStreamFramePayload stream can not be null.");
             }
 
-            var frame = new Frame(payload);
-            var frameBytes = AssembleFrame(frame, encryptionProvider);
+            var frameBody = new FrameBody(framePayload);
+            var frameBytes = AssembleFrame(frameBody, encryptionProvider);
             stream.Write(frameBytes, 0, frameBytes.Length);
         }
 
         #endregion
 
-        private static byte[] AssembleFrame(Frame frame, EncryptionProviderCallback? encryptionProvider)
+        private static byte[] AssembleFrame(FrameBody frameBody, EncryptionProviderCallback? encryptionProvider)
         {
-            var frameBytes = Utility.SerializeToByteArray(frame);
-            var compressedFrameBytes = Utility.Compress(frameBytes);
+            var FrameBodyBytes = Utility.SerializeToByteArray(frameBody);
+            var compressedFrameBodyBytes = Utility.Compress(FrameBodyBytes);
 
             if (encryptionProvider != null)
             {
-                compressedFrameBytes = encryptionProvider(compressedFrameBytes);
+                compressedFrameBodyBytes = encryptionProvider(compressedFrameBodyBytes);
             }
 
-            var grossFrameSize = compressedFrameBytes.Length + NtFrameDefaults.FRAME_HEADER_SIZE;
+            var grossFrameSize = compressedFrameBodyBytes.Length + NtFrameDefaults.FRAME_HEADER_SIZE;
             var grossFrameBytes = new byte[grossFrameSize];
-            var frameCrc = CRC16.ComputeChecksum(compressedFrameBytes);
+            var frameCrc = CRC16.ComputeChecksum(compressedFrameBodyBytes);
 
             Buffer.BlockCopy(BitConverter.GetBytes(NtFrameDefaults.FRAME_DELIMITER), 0, grossFrameBytes, 0, 4);
             Buffer.BlockCopy(BitConverter.GetBytes(grossFrameSize), 0, grossFrameBytes, 4, 4);
             Buffer.BlockCopy(BitConverter.GetBytes(frameCrc), 0, grossFrameBytes, 8, 2);
-            Buffer.BlockCopy(compressedFrameBytes, 0, grossFrameBytes, NtFrameDefaults.FRAME_HEADER_SIZE, compressedFrameBytes.Length);
+            Buffer.BlockCopy(compressedFrameBodyBytes, 0, grossFrameBytes, NtFrameDefaults.FRAME_HEADER_SIZE, compressedFrameBodyBytes.Length);
 
             return grossFrameBytes;
         }
@@ -282,16 +281,16 @@ namespace NTDLS.StreamFraming
                 }
 
                 var netFrameSize = grossFrameSize - NtFrameDefaults.FRAME_HEADER_SIZE;
-                var compressedFrameBytes = new byte[netFrameSize];
-                Buffer.BlockCopy(frameBuffer.FrameBuilder, NtFrameDefaults.FRAME_HEADER_SIZE, compressedFrameBytes, 0, netFrameSize);
+                var compressedFrameBodyBytes = new byte[netFrameSize];
+                Buffer.BlockCopy(frameBuffer.FrameBuilder, NtFrameDefaults.FRAME_HEADER_SIZE, compressedFrameBodyBytes, 0, netFrameSize);
 
                 if (encryptionProvider != null)
                 {
-                    compressedFrameBytes = encryptionProvider(compressedFrameBytes);
+                    compressedFrameBodyBytes = encryptionProvider(compressedFrameBodyBytes);
                 }
 
-                var frameBytes = Utility.Decompress(compressedFrameBytes);
-                var frame = Utility.DeserializeToObject<Frame>(frameBytes);
+                var FrameBodyBytes = Utility.Decompress(compressedFrameBodyBytes);
+                var frameBody = Utility.DeserializeToObject<FrameBody>(FrameBodyBytes);
 
                 //Zero out the consumed portion of the frame buffer - more for fun than anything else.
                 Array.Clear(frameBuffer.FrameBuilder, 0, grossFrameSize);
@@ -299,9 +298,9 @@ namespace NTDLS.StreamFraming
                 Buffer.BlockCopy(frameBuffer.FrameBuilder, grossFrameSize, frameBuffer.FrameBuilder, 0, frameBuffer.FrameBuilderLength - grossFrameSize);
                 frameBuffer.FrameBuilderLength -= grossFrameSize;
 
-                var payload = ExtractFramePayload(frame);
+                var framePayload = ExtractFramePayload(frameBody);
 
-                if (payload is FramePayloadBytes frameNotificationBytes)
+                if (framePayload is FramePayloadBytes frameNotificationBytes)
                 {
                     if (processNotificationCallback == null)
                     {
@@ -309,23 +308,23 @@ namespace NTDLS.StreamFraming
                     }
                     processNotificationCallback(frameNotificationBytes);
                 }
-                else if (payload is IFramePayloadQuery query)
+                else if (framePayload is IFramePayloadQuery query)
                 {
                     if (processFrameQueryCallback == null)
                     {
                         throw new Exception("ProcessFrameBuffer: A query handler was not supplied.");
                     }
                     var replyPayload = processFrameQueryCallback(query);
-                    stream.WriteReplyFrame(frame, replyPayload);
+                    stream.WriteReplyFrame(frameBody, replyPayload);
                 }
-                else if (payload is IFramePayloadQueryReply reply)
+                else if (framePayload is IFramePayloadQueryReply reply)
                 {
                     // A reply to a query was received, we need to find the waiting query - set the reply payload data and trigger the wait event.
-                    var waitingQuery = _queriesAwaitingReplies.Where(o => o.FrameId == frame.Id).Single();
+                    var waitingQuery = _queriesAwaitingReplies.Where(o => o.FrameBodyId == frameBody.Id).Single();
                     waitingQuery.ReplyPayload = reply;
                     waitingQuery.WaitEvent.Set();
                 }
-                else if (payload is IFramePayloadNotification notification)
+                else if (framePayload is IFramePayloadNotification notification)
                 {
                     if (processNotificationCallback == null)
                     {
@@ -347,23 +346,23 @@ namespace NTDLS.StreamFraming
         /// <param name="frame"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        private static IFramePayload ExtractFramePayload(Frame frame)
+        private static IFramePayload ExtractFramePayload(FrameBody frame)
         {
-            if (frame.EnclosedPayloadType == "byte[]")
+            if (frame.ObjectType == "byte[]")
             {
-                return new FramePayloadBytes(frame.BytesPayload);
+                return new FramePayloadBytes(frame.Bytes);
             }
 
             var genericToObjectMethod = _reflectioncache.Use((o) =>
             {
-                if (o.TryGetValue(frame.EnclosedPayloadType, out var method))
+                if (o.TryGetValue(frame.ObjectType, out var method))
                 {
                     return method;
                 }
                 return null;
             });
 
-            string json = Encoding.UTF8.GetString(frame.BytesPayload);
+            string json = Encoding.UTF8.GetString(frame.Bytes);
 
             if (genericToObjectMethod != null)
             {
@@ -371,15 +370,15 @@ namespace NTDLS.StreamFraming
                     ?? throw new Exception($"ExtractFramePayload: Payload can not be null.");
             }
 
-            var genericType = Type.GetType(frame.EnclosedPayloadType)
-                ?? throw new Exception($"ExtractFramePayload: Unknown payload type {frame.EnclosedPayloadType}.");
+            var genericType = Type.GetType(frame.ObjectType)
+                ?? throw new Exception($"ExtractFramePayload: Unknown payload type {frame.ObjectType}.");
 
             var toObjectMethod = typeof(Utility).GetMethod("JsonDeserializeToObject")
                 ?? throw new Exception($"ExtractFramePayload: Could not find JsonDeserializeToObject().");
 
             genericToObjectMethod = toObjectMethod.MakeGenericMethod(genericType);
 
-            _reflectioncache.Use((o) => o.TryAdd(frame.EnclosedPayloadType, genericToObjectMethod));
+            _reflectioncache.Use((o) => o.TryAdd(frame.ObjectType, genericToObjectMethod));
 
             return (IFramePayload?)genericToObjectMethod.Invoke(null, new object[] { json })
                 ?? throw new Exception($"ExtractFramePayload: Payload can not be null.");
