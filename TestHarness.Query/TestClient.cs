@@ -44,7 +44,7 @@ namespace TestHarness
                     while (_tcpClient.Connected)
                     {
                         //Read from the stream, assemble the bytes into the original messages and call the handler for each message that was received.
-                        if (tcpStream.ReadAndProcessFrames(frameBuffer, ProcessFrameNotification, ProcessFrameQuery) == false)
+                        if (!tcpStream.ReadAndProcessFrames(frameBuffer, ProcessFrameNotification, ProcessFrameQuery))
                         {
                             //If ReadAndProcessFrames() returns false then we have been disconnected.
                             break;

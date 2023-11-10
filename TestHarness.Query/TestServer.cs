@@ -1,7 +1,6 @@
 ﻿using NTDLS.StreamFraming;
 using System.Net;
 using System.Net.Sockets;
-using System.Runtime.CompilerServices;
 using TestHarness.Payloads;
 
 namespace TestHarness

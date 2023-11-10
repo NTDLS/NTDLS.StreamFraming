@@ -4,7 +4,7 @@ using System.IO;
 namespace NTDLS.StreamFraming
 {
     /// <summary>
-    /// Auto-resizing frame buffer for stream frame re-assembly.
+    /// Auto-resizing frame buffer for stream receiving and stream frame reassembly.
     /// </summary>
     public class FrameBuffer
     {

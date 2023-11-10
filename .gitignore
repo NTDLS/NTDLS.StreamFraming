@@ -8,3 +8,11 @@ NTDLS.StreamFraming/obj/
 TestHarness/bin/
 
 TestHarness/obj/
+
+TestHarness.Query/bin/
+
+TestHarness.Query/obj/
+
+TestHarness.Simple/bin/
+
+TestHarness.Simple/obj/
