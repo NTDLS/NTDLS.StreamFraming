@@ -4,3 +4,7 @@ NTDLS.StreamFraming/bin/
 NTDLS.StreamFraming/obj/
 
 .vs/
+
+TestHarness/bin/
+
+TestHarness/obj/

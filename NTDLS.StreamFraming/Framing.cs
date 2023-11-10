@@ -7,58 +7,81 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using static NTDLS.StreamFraming.Types;
+using static NTDLS.StreamFraming.Defaults;
 
 namespace NTDLS.StreamFraming
 {
     /// <summary>
-    /// TCP packets can be fragmented or combined. The packetizer rebuilds what was originally
-    /// sent via the TCP send() call, provides compression and also performs a CRC check.
+    /// Stream packets (especially TCP/IP) can be fragmented or combined. Framing rebuilds what was
+    /// originally written to the stream while also providing compression, CRC checking and optional encryption.
     /// </summary>
     public static class Framing
     {
+        /// <summary>
+        /// The callback that is used to notify of the receipt of a notification frame.
+        /// </summary>
+        /// <param name="payload">The notification payload.</param>
+        public delegate void ProcessFrameNotificationCallback(IFrameNotification payload);
+
+        /// <summary>
+        /// The callback that is used to notify of the receipt of a query frame. A return of type IFrameQueryReply
+        ///  is  expected and will be routed to the originator and the appropriate waiting asynchronous task.
+        /// </summary>
+        /// <param name="payload">The query payload</param>
+        /// <returns>The reply payload to return to the originator.</returns>
+        public delegate IFrameQueryReply ProcessFrameQueryCallback(IFrameQuery payload);
+
         private static readonly PessimisticSemaphore<Dictionary<string, MethodInfo>> _reflectioncache = new();
         private static readonly List<QueryAwaitingReply> _queriesAwaitingReplies = new();
 
-        public delegate byte[] EncryptionProvider(byte[] buffer);
+        /// <summary>
+        /// Delegate use to provide manipulate the payload bytes after they are compressed but before they are framed.
+        /// </summary>
+        /// <param name="buffer"></param>
+        /// <returns></returns>
+        public delegate byte[] EncryptionProviderCallback(byte[] buffer);
 
         #region Extension methods.
 
         /// <summary>
-        /// Reads available bytes from a stream, parses the available frames (if any) and calls the appropriate callbacks.
+        /// Waits on bytes to become available on the stream, reads those bytes then parses the available frames (if any) and calls the appropriate callbacks.
         /// </summary>
-        /// <param name="stream"></param>
-        /// <param name="frameBuffer"></param>
-        /// <param name="processNotificationCallback"></param>
-        /// <param name="processFrameQueryCallback"></param>
-        /// <param name="encryptionProvider"></param>
-        /// <returns></returns>
+        /// <param name="stream">The open stream that should be read from</param>
+        /// <param name="frameBuffer">The frame buffer that will be used to receive bytes from the stream.</param>
+        /// <param name="processNotificationCallback">Optional callback to call when a notification frame is received.</param>
+        /// <param name="processFrameQueryCallback">Optional callback to call when a query frame is received.</param>
+        /// <param name="encryptionProvider">An optional callback that is called to allow for manipulation of bytes after they are received.</param>
+        /// <returns>Returns true if the stream is healthy, returns false if disconnected.</returns>
         /// <exception cref="Exception"></exception>
         public static bool ReadAndProcessFrames(this Stream stream, FrameBuffer frameBuffer,
-            ProcessFrameNotification processNotificationCallback, ProcessFrameQuery? processFrameQueryCallback = null,
-            EncryptionProvider? encryptionProvider = null)
+            ProcessFrameNotificationCallback? processNotificationCallback = null, ProcessFrameQueryCallback? processFrameQueryCallback = null,
+            EncryptionProviderCallback? encryptionProvider = null)
         {
             if (stream == null)
             {
                 throw new Exception("ReceiveAndProcessStreamFrames: stream can not be null.");
             }
 
-            Array.Clear(frameBuffer.ReceiveBuffer);
-            frameBuffer.ReceiveBufferUsed = stream.Read(frameBuffer.ReceiveBuffer, 0, frameBuffer.ReceiveBuffer.Length);
-            if (frameBuffer.ReceiveBufferUsed == 0)
+            if (frameBuffer.ReadStream(stream))
             {
-                return false;
+                ProcessFrameBuffer(stream, frameBuffer, processNotificationCallback, processFrameQueryCallback, encryptionProvider);
+                return true;
             }
 
-            ProcessFrameBuffer(stream, frameBuffer, processNotificationCallback, processFrameQueryCallback, encryptionProvider);
-
-            return true;
+            return false;
         }
 
         /// <summary>
         /// Writes a query to the stream, expects a reply.
         /// </summary>
-        public static async Task<T> WriteQuery<T>(this Stream stream, IFrameQuery payload, int queryTimeout = -1, EncryptionProvider? encryptionProvider = null)
+        /// <typeparam name="T">The type of the expected reply payload.</typeparam>
+        /// <param name="stream">The open stream that will be written to.</param>
+        /// <param name="payload">The query payload that will be written to the stream.</param>
+        /// <param name="queryTimeout">The number of milliseconds to wait on a reply to the query.</param>
+        /// <param name="encryptionProvider">An optional callback that is called to allow for manipulation of bytes before they are framed.</param>
+        /// <returns>Returns the reply payload that is written to the stream from the recipient of the query.</returns>
+        /// <exception cref="Exception"></exception>
+        public static async Task<T> WriteQuery<T>(this Stream stream, IFrameQuery payload, int queryTimeout = -1, EncryptionProviderCallback? encryptionProvider = null)
         {
             if (stream == null)
             {
@@ -105,7 +128,12 @@ namespace NTDLS.StreamFraming
         /// <summary>
         /// Writes a reply to the stream in reply to a stream query.
         /// </summary>
-        public static void WriteReply(this Stream stream, Frame queryFrame, IFrameQueryReply payload, EncryptionProvider? encryptionProvider = null)
+        /// <param name="stream">The open stream that will be written to.</param>
+        /// <param name="queryFrame">The query frame that was received and that we are responding to.</param>
+        /// <param name="payload">The query reply payload.</param>
+        /// <param name="encryptionProvider">An optional callback that is called to allow for manipulation of bytes before they are framed.</param>
+        /// <exception cref="Exception"></exception>
+        public static void WriteReply(this Stream stream, Frame queryFrame, IFrameQueryReply payload, EncryptionProviderCallback? encryptionProvider = null)
         {
             if (stream == null)
             {
@@ -125,7 +153,11 @@ namespace NTDLS.StreamFraming
         /// <summary>
         /// Sends a one-time fire-and-forget notification to the stream.
         /// </summary>
-        public static void WriteNotification(this Stream stream, IFrameNotification payload, EncryptionProvider? encryptionProvider = null)
+        /// <param name="stream">The open stream that will be written to.</param>
+        /// <param name="payload">The notification payload that will be written to the stream.</param>
+        /// <param name="encryptionProvider">An optional callback that is called to allow for manipulation of bytes before they are framed.</param>
+        /// <exception cref="Exception"></exception>
+        public static void WriteNotification(this Stream stream, IFrameNotification payload, EncryptionProviderCallback? encryptionProvider = null)
         {
             if (stream == null)
             {
@@ -143,7 +175,7 @@ namespace NTDLS.StreamFraming
 
         #endregion
 
-        private static byte[] AssembleFrame(Frame frame, EncryptionProvider? encryptionProvider)
+        private static byte[] AssembleFrame(Frame frame, EncryptionProviderCallback? encryptionProvider)
         {
             var frameBody = Utility.SerializeToByteArray(frame);
             var frameBytes = Utility.Compress(frameBody);
@@ -186,8 +218,10 @@ namespace NTDLS.StreamFraming
             frameBuffer.FrameBuilderLength = 0;
         }
 
-        private static void ProcessFrameBuffer(this Stream stream, FrameBuffer frameBuffer, ProcessFrameNotification processNotificationCallback,
-             ProcessFrameQuery? processFrameQueryCallback, EncryptionProvider? encryptionProvider = null)
+        private static void ProcessFrameBuffer(this Stream stream, FrameBuffer frameBuffer,
+            ProcessFrameNotificationCallback? processNotificationCallback,
+            ProcessFrameQueryCallback? processFrameQueryCallback,
+            EncryptionProviderCallback? encryptionProvider = null)
         {
             if (frameBuffer.FrameBuilderLength + frameBuffer.ReceiveBufferUsed >= frameBuffer.FrameBuilder.Length)
             {
@@ -271,6 +305,10 @@ namespace NTDLS.StreamFraming
                 }
                 else if (payload is IFrameNotification notification)
                 {
+                    if (processNotificationCallback == null)
+                    {
+                        throw new Exception("ProcessFrameBuffer: A notification handler was not supplied.");
+                    }
                     processNotificationCallback(notification);
                 }
                 else

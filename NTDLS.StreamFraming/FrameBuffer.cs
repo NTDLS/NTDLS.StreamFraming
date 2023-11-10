@@ -1,10 +1,28 @@
-﻿namespace NTDLS.StreamFraming
+﻿using System;
+using System.IO;
+
+namespace NTDLS.StreamFraming
 {
     /// <summary>
     /// Auto-resizing frame buffer for stream frame re-assembly.
     /// </summary>
     public class FrameBuffer
     {
+        /// <summary>
+        /// The initial size of the receive buffer. If the buffer ever gets full while receiving data it will be automatically resized up to MaxReceiveBufferSize.
+        /// </summary>
+        public int InitialReceiveBufferSize { get; private set; } = 16 * 1024;
+
+        /// <summary>
+        ///The maximum size of the receive buffer. If the buffer ever gets full while receiving data it will be automatically resized up to MaxReceiveBufferSize.
+        /// </summary>
+        public int MaxReceiveBufferSize { get; set; } = 1024 * 1024;
+
+        /// <summary>
+        ///The growth rate of the auto-resizing for the receive buffer.
+        /// </summary>
+        public double ReceiveBufferGrowthRate { get; set; } = 0.2;
+
         /// <summary>
         /// The number of bytes in the current receive buffer.
         /// </summary>
@@ -24,10 +42,67 @@
         /// </summary>
         public int FrameBuilderLength = 0;
 
-        public FrameBuffer(int framebufferSize)
+        internal bool ReadStream(Stream stream)
         {
-            ReceiveBuffer = new byte[framebufferSize];
-            FrameBuilder = new byte[framebufferSize];
+            try
+            {
+                ReceiveBufferUsed = stream.Read(ReceiveBuffer, 0, ReceiveBuffer.Length);
+                if (ReceiveBufferUsed == 0)
+                {
+                    return false; //Graceful stream disconnect.
+                }
+                if (ReceiveBufferUsed == ReceiveBuffer.Length && ReceiveBufferUsed < MaxReceiveBufferSize)
+                {
+                    AutoGrowReceiveBuffer();
+                }
+            }
+            catch (IOException)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Resizes the receive buffer by the given growth rate, up to the maxFrameBufferSize.
+        /// </summary>
+        private void AutoGrowReceiveBuffer()
+        {
+            if (ReceiveBuffer.Length < MaxReceiveBufferSize)
+            {
+                int newSize = (int)(ReceiveBuffer.Length + ReceiveBuffer.Length * ReceiveBufferGrowthRate);
+                if (newSize > MaxReceiveBufferSize)
+                {
+                    newSize = MaxReceiveBufferSize;
+                }
+                Array.Resize(ref ReceiveBuffer, newSize);
+            }
+        }
+
+        /// <summary>
+        /// Instanciates a new frame buffer with a pre-defined size.
+        /// </summary>
+        /// <param name="initialReceiveBufferSize"></param>
+        /// <param name="maxReceiveBufferSize"></param>
+        /// <param name="receiveBufferGrowthRate"></param>
+        public FrameBuffer(int initialReceiveBufferSize, int maxReceiveBufferSize, double receiveBufferGrowthRate = 0.2)
+        {
+            InitialReceiveBufferSize = initialReceiveBufferSize;
+            MaxReceiveBufferSize = maxReceiveBufferSize;
+            ReceiveBufferGrowthRate = receiveBufferGrowthRate;
+
+            ReceiveBuffer = new byte[initialReceiveBufferSize];
+            FrameBuilder = new byte[initialReceiveBufferSize];
+        }
+
+        /// <summary>
+        /// Instanciates a new frame buffer with a default initial size of 16KB, a max size of 1MB and a growth rate of 0.1 (10%).
+        /// </summary>
+        public FrameBuffer()
+        {
+            ReceiveBuffer = new byte[InitialReceiveBufferSize];
+            FrameBuilder = new byte[InitialReceiveBufferSize];
         }
     }
 }

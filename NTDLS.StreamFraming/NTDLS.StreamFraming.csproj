@@ -6,17 +6,18 @@
     <Authors>NetworkDLS</Authors>
     <Nullable>Enable</Nullable>
     <Company>NetworkDLS</Company>
-    <Description>Stream wrapper (typically TCPIP/NetworkStream) that enables reliable framing, compression, optional encryption and two way communication.</Description>
+    <Description>Stream wrapper (typically TCPIP/NetworkStream) that enables reliable framing, compression, optional encryption, two-way communication and support for query/reply. Messages are guaranteed to received in their entirety and in the order they were sent.</Description>
     <Copyright>Copyright © 2023 NetworkDLS</Copyright>
     <PackageProjectUrl>https://github.com/NTDLS/NTDLS.StreamFraming</PackageProjectUrl>
     <RepositoryUrl>https://github.com/NTDLS/NTDLS.StreamFraming</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageReleaseNotes>
-      Updated semaphore pacakge.
+      Updated FrameBuffer for auto-sizing.
+      Added a documentation.
     </PackageReleaseNotes>
-    <AssemblyVersion>1.0.6</AssemblyVersion>
-    <FileVersion>1.0.6</FileVersion>
-    <VersionPrefix>1.0.6</VersionPrefix>
+    <AssemblyVersion>1.1.0</AssemblyVersion>
+    <FileVersion>1.1.0</FileVersion>
+    <VersionPrefix>1.1.0</VersionPrefix>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageTags>stream;framing;tcpip;io;</PackageTags>
     <IncludeSymbols>False</IncludeSymbols>

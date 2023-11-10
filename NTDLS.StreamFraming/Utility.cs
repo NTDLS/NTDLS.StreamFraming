@@ -9,7 +9,7 @@ using System.Runtime.CompilerServices;
 
 namespace NTDLS.StreamFraming
 {
-    public static class Utility
+    internal static class Utility
     {
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static string GetCurrentMethod()
