@@ -4,8 +4,8 @@
 
 NTDLS.StreamFraming is a set of extension methods for a Stream (typically TCPIP/NetworkStream) that
 enables reliable framing, compression, optional encryption, two-way communication and support for
-asynchronous query/reply. Messages are guaranteed to received in their entirety and in the order
-they were sent.
+asynchronous query/reply. Messages are guaranteed to be received in their entirety and in the order
+which they were sent.
 
 ## Sending a notification frame:
 > Here we are using an established TcpClient connection, getting its stream and then calling
