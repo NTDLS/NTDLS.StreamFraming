@@ -12,13 +12,11 @@
     <RepositoryUrl>https://github.com/NTDLS/NTDLS.StreamFraming</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageReleaseNotes>
-      Added byte payload framing.
-      Updated FrameBuffer for auto-sizing.
-      Added a documentation.
+      Added more standard encryption provider implementation.
     </PackageReleaseNotes>
-    <AssemblyVersion>1.1.0</AssemblyVersion>
-    <FileVersion>1.1.0</FileVersion>
-    <VersionPrefix>1.1.0</VersionPrefix>
+    <AssemblyVersion>1.2.0</AssemblyVersion>
+    <FileVersion>1.2.0</FileVersion>
+    <VersionPrefix>1.2.0</VersionPrefix>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageTags>stream;framing;tcpip;io;</PackageTags>
     <IncludeSymbols>False</IncludeSymbols>
