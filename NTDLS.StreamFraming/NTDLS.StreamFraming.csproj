@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
+    <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
     <Title>NTDLS.StreamFraming</Title>
     <Authors>NetworkDLS</Authors>
     <Nullable>Enable</Nullable>
@@ -12,11 +12,11 @@
     <RepositoryUrl>https://github.com/NTDLS/NTDLS.StreamFraming</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageReleaseNotes>
-      Added more standard encryption provider implementation.
+      net8
     </PackageReleaseNotes>
-    <AssemblyVersion>1.2.0</AssemblyVersion>
-    <FileVersion>1.2.0</FileVersion>
-    <VersionPrefix>1.2.0</VersionPrefix>
+    <AssemblyVersion>1.2.1</AssemblyVersion>
+    <FileVersion>1.2.1</FileVersion>
+    <VersionPrefix>1.2.1</VersionPrefix>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageTags>stream;framing;tcpip;io;</PackageTags>
     <IncludeSymbols>False</IncludeSymbols>
@@ -47,7 +47,7 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="NTDLS.Semaphore" Version="2.2.2" />
+    <PackageReference Include="NTDLS.Semaphore" Version="2.2.5" />
     <PackageReference Include="protobuf-net" Version="3.2.26" />
   </ItemGroup>
 
