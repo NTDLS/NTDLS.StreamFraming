@@ -113,12 +113,17 @@ namespace NTDLS.StreamFraming
                     throw new Exception("The reply payload can not be null.");
                 }
 
+                if (queryAwaitingReply.ReplyPayload is FramePayloadQueryReplyException ex)
+                {
+                    throw ex.Exception;
+                }
+
                 return (T)queryAwaitingReply.ReplyPayload;
             });
         }
 
         /// <summary>
-        /// Writes a reply to the stream in reply to a stream query.
+        /// Writes a reply to the stream, in reply to a stream query.
         /// </summary>
         /// <param name="stream">The open stream that will be written to.</param>
         /// <param name="queryFrameBody">The query frame that was received and that we are responding to.</param>

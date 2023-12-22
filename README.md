@@ -7,6 +7,7 @@ enables reliable framing, compression, optional encryption, two-way communicatio
 asynchronous query/reply. Messages are guaranteed to be received in their entirety and in the order
 which they were sent.
 
+
 ## Sending a notification frame:
 > Here we are using an established TcpClient connection, getting its stream and then calling
 > WriteNotification() to pacakge the payload "MyMessage" and write it to the stream.
