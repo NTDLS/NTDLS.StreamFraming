@@ -76,7 +76,7 @@ namespace NTDLS.StreamFraming
         /// <param name="encryptionProvider">An optional callback that is called to allow for manipulation of bytes before they are framed.</param>
         /// <returns>Returns the reply payload that is written to the stream from the recipient of the query.</returns>
         /// <exception cref="Exception"></exception>
-        public static async Task<T> WriteQueryFrame<T>(this Stream stream,
+        public static async Task<T> WriteQueryFrameAsync<T>(this Stream stream,
             IFramePayloadQuery framePayload, int queryTimeout = -1, IStreamFramingEncryptionProvider? encryptionProvider = null)
         {
             if (stream == null)
@@ -120,6 +120,59 @@ namespace NTDLS.StreamFraming
 
                 return (T)queryAwaitingReply.ReplyPayload;
             });
+        }
+
+        /// <summary>
+        /// Writes a query to the stream, expects a reply.
+        /// </summary>
+        /// <typeparam name="T">The type of the expected reply payload.</typeparam>
+        /// <param name="stream">The open stream that will be written to.</param>
+        /// <param name="framePayload">The query payload that will be written to the stream.</param>
+        /// <param name="queryTimeout">The number of milliseconds to wait on a reply to the query.</param>
+        /// <param name="encryptionProvider">An optional callback that is called to allow for manipulation of bytes before they are framed.</param>
+        /// <returns>Returns the reply payload that is written to the stream from the recipient of the query.</returns>
+        /// <exception cref="Exception"></exception>
+        public static Task<T> WriteQueryFrame<T>(this Stream stream,
+            IFramePayloadQuery framePayload, int queryTimeout = -1, IStreamFramingEncryptionProvider? encryptionProvider = null)
+        {
+            if (stream == null)
+            {
+                throw new Exception("SendStreamFramePayload stream can not be null.");
+            }
+
+            var FrameBody = new FrameBody(framePayload);
+
+            var queryAwaitingReply = new QueryAwaitingReply()
+            {
+                FrameBodyId = FrameBody.Id,
+            };
+
+            _queriesAwaitingReplies.Add(queryAwaitingReply);
+
+            var frameBytes = AssembleFrame(FrameBody, encryptionProvider);
+            stream.Write(frameBytes, 0, frameBytes.Length);
+
+            //Wait for a reply. When a reply is received, it will be routed to the correct query via ApplyQueryReply().
+            //ApplyQueryReply() will apply the payload data to queryAwaitingReply and trigger the wait event.
+            if (queryAwaitingReply.WaitEvent.WaitOne(queryTimeout) == false)
+            {
+                _queriesAwaitingReplies.Remove(queryAwaitingReply);
+                throw new Exception("Query timeout expired while waiting on reply.");
+            }
+
+            _queriesAwaitingReplies.Remove(queryAwaitingReply);
+
+            if (queryAwaitingReply.ReplyPayload == null)
+            {
+                throw new Exception("The reply payload can not be null.");
+            }
+
+            if (queryAwaitingReply.ReplyPayload is FramePayloadQueryReplyException ex)
+            {
+                throw ex.Exception;
+            }
+
+            return Task.FromResult((T)queryAwaitingReply.ReplyPayload);
         }
 
         /// <summary>

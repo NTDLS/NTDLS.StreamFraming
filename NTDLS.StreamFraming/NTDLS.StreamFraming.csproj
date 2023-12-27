@@ -12,11 +12,11 @@
     <RepositoryUrl>https://github.com/NTDLS/NTDLS.StreamFraming</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageReleaseNotes>
-      Added exception handling to query reply.
+      Added QueryAsync().
     </PackageReleaseNotes>
-    <AssemblyVersion>1.2.2</AssemblyVersion>
-    <FileVersion>1.2.2</FileVersion>
-    <VersionPrefix>1.2.2</VersionPrefix>
+    <AssemblyVersion>1.2.3</AssemblyVersion>
+    <FileVersion>1.2.3</FileVersion>
+    <VersionPrefix>1.2.3</VersionPrefix>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageTags>stream;framing;tcpip;io;</PackageTags>
     <IncludeSymbols>False</IncludeSymbols>
@@ -47,8 +47,8 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="NTDLS.Semaphore" Version="2.2.5" />
-    <PackageReference Include="protobuf-net" Version="3.2.26" />
+    <PackageReference Include="NTDLS.Semaphore" Version="3.1.0" />
+    <PackageReference Include="protobuf-net" Version="3.2.30" />
   </ItemGroup>
 
   <ItemGroup>
