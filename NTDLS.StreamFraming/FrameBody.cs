@@ -38,7 +38,7 @@ namespace NTDLS.StreamFraming
         public FrameBody(IFramePayload framePayload)
         {
             ObjectType = framePayload.GetType()?.AssemblyQualifiedName ?? string.Empty;
-            Bytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(framePayload));
+            Bytes = Encoding.UTF8.GetBytes(Utility.JsonSerialize(framePayload));
         }
 
         /// <summary>
