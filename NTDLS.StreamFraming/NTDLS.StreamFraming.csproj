@@ -12,16 +12,16 @@
     <RepositoryUrl>https://github.com/NTDLS/NTDLS.StreamFraming</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageReleaseNotes>
-      Added types to json to enable derived type deserialization.
+      Removed icon.
     </PackageReleaseNotes>
-    <AssemblyVersion>1.2.4</AssemblyVersion>
-    <FileVersion>1.2.4</FileVersion>
-    <VersionPrefix>1.2.4</VersionPrefix>
+    <AssemblyVersion>1.2.5</AssemblyVersion>
+    <Version>1.2.5</Version>
+    <FileVersion>1.2.5</FileVersion>
+    <VersionPrefix>1.2.5</VersionPrefix>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageTags>stream;framing;tcpip;io;</PackageTags>
-    <IncludeSymbols>True</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <Version>$(VersionPrefix)</Version>
+    <IncludeSymbols>True</IncludeSymbols>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <PackageIcon>128.png</PackageIcon>
@@ -29,10 +29,9 @@
     <ApplicationIcon>Logo.ico</ApplicationIcon>
   </PropertyGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition=" '$(BuildingPackage)' == 'true' ">
     <Content Include="Logo.ico" />
   </ItemGroup>
-
 
   <ItemGroup>
     <None Include="..\Images\128.png">
@@ -47,7 +46,7 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="NTDLS.Semaphore" Version="3.1.0" />
+    <PackageReference Include="NTDLS.Semaphore" Version="3.1.1" />
     <PackageReference Include="protobuf-net" Version="3.2.30" />
   </ItemGroup>
 
