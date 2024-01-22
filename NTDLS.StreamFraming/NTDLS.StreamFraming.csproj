@@ -12,12 +12,12 @@
     <RepositoryUrl>https://github.com/NTDLS/NTDLS.StreamFraming</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageReleaseNotes>
-      Removed icon.
+      Nuget updates.
     </PackageReleaseNotes>
-    <AssemblyVersion>1.2.5</AssemblyVersion>
-    <Version>1.2.5</Version>
-    <FileVersion>1.2.5</FileVersion>
-    <VersionPrefix>1.2.5</VersionPrefix>
+    <AssemblyVersion>1.2.6</AssemblyVersion>
+    <Version>1.2.6</Version>
+    <FileVersion>1.2.6</FileVersion>
+    <VersionPrefix>1.2.6</VersionPrefix>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageTags>stream;framing;tcpip;io;</PackageTags>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
@@ -46,7 +46,7 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="NTDLS.Semaphore" Version="3.1.1" />
+    <PackageReference Include="NTDLS.Semaphore" Version="3.3.0" />
     <PackageReference Include="protobuf-net" Version="3.2.30" />
   </ItemGroup>
 

@@ -32,7 +32,7 @@ namespace NTDLS.StreamFraming
         /// <returns>The reply payload to return to the originator.</returns>
         public delegate IFramePayloadQueryReply ProcessFrameQueryCallback(IFramePayloadQuery payload);
 
-        private static readonly PessimisticSemaphore<Dictionary<string, MethodInfo>> _reflectioncache = new();
+        private static readonly PessimisticCriticalResource<Dictionary<string, MethodInfo>> _reflectioncache = new();
         private static readonly List<QueryAwaitingReply> _queriesAwaitingReplies = new();
 
 
