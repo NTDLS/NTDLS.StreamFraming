@@ -12,13 +12,10 @@
     <RepositoryUrl>https://github.com/NTDLS/NTDLS.StreamFraming</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageReleaseNotes>
-      Nuget updates.
+      License fix.
     </PackageReleaseNotes>
-    <AssemblyVersion>1.2.6</AssemblyVersion>
-    <Version>1.2.6</Version>
-    <FileVersion>1.2.6</FileVersion>
-    <VersionPrefix>1.2.6</VersionPrefix>
-    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <Version>1.2.7</Version>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageTags>stream;framing;tcpip;io;</PackageTags>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <IncludeSymbols>True</IncludeSymbols>
