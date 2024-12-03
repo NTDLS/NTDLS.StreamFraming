@@ -12,9 +12,9 @@
     <RepositoryUrl>https://github.com/NTDLS/NTDLS.StreamFraming</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageReleaseNotes>
-      License fix.
+      Dependency updates.
     </PackageReleaseNotes>
-    <Version>1.2.7</Version>
+    <Version>1.2.8</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageTags>stream;framing;tcpip;io;</PackageTags>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
@@ -43,8 +43,8 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="NTDLS.Semaphore" Version="3.3.0" />
-    <PackageReference Include="protobuf-net" Version="3.2.30" />
+    <PackageReference Include="NTDLS.Semaphore" Version="3.4.9" />
+    <PackageReference Include="protobuf-net" Version="3.2.45" />
   </ItemGroup>
 
   <ItemGroup>
