@@ -1,7 +1,7 @@
 ﻿namespace NTDLS.StreamFraming.Payloads
 {
     /// <summary>
-    /// All querry reply frames must in herit from this interface and be json serializable.
+    /// All query reply frames must in inherit from this interface and be json serializable.
     /// </summary>
     public interface IFramePayloadQueryReply : IFramePayload
     {

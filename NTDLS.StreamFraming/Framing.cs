@@ -32,7 +32,7 @@ namespace NTDLS.StreamFraming
         /// <returns>The reply payload to return to the originator.</returns>
         public delegate IFramePayloadQueryReply ProcessFrameQueryCallback(IFramePayloadQuery payload);
 
-        private static readonly PessimisticCriticalResource<Dictionary<string, MethodInfo>> _reflectioncache = new();
+        private static readonly PessimisticCriticalResource<Dictionary<string, MethodInfo>> _reflectionCache = new();
         private static readonly List<QueryAwaitingReply> _queriesAwaitingReplies = new();
 
 
@@ -223,7 +223,7 @@ namespace NTDLS.StreamFraming
 
         /// <summary>
         /// Sends a one-time fire-and-forget byte array payload. These are and handled in processNotificationCallback().
-        /// When a raw byte array is use, all json serilization is skipped and checks for this payload type are prioritized for performance.
+        /// When a raw byte array is use, all json serialization is skipped and checks for this payload type are prioritized for performance.
         /// </summary>
         /// <param name="stream">The open stream that will be written to.</param>
         /// <param name="framePayload">The bytes will make up the body of the frame which is written to the stream.</param>
@@ -408,7 +408,7 @@ namespace NTDLS.StreamFraming
                 return new FramePayloadBytes(frame.Bytes);
             }
 
-            var genericToObjectMethod = _reflectioncache.Use((o) =>
+            var genericToObjectMethod = _reflectionCache.Use((o) =>
             {
                 if (o.TryGetValue(frame.ObjectType, out var method))
                 {
@@ -433,7 +433,7 @@ namespace NTDLS.StreamFraming
 
             genericToObjectMethod = toObjectMethod.MakeGenericMethod(genericType);
 
-            _reflectioncache.Use((o) => o.TryAdd(frame.ObjectType, genericToObjectMethod));
+            _reflectionCache.Use((o) => o.TryAdd(frame.ObjectType, genericToObjectMethod));
 
             return (IFramePayload?)genericToObjectMethod.Invoke(null, new object[] { json })
                 ?? throw new Exception($"ExtractFramePayload: Payload can not be null.");

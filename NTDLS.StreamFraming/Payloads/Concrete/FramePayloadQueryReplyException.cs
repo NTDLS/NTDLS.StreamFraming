@@ -3,17 +3,17 @@
 namespace NTDLS.StreamFraming.Payloads.Concrete
 {
     /// <summary>
-    /// Used when an exception occurs durring a query.
+    /// Used when an exception occurs during a query.
     /// </summary>
     public class FramePayloadQueryReplyException : IFramePayloadQueryReply
     {
         /// <summary>
-        /// The exception that occured while executing the query.
+        /// The exception that occurred while executing the query.
         /// </summary>
         public Exception Exception { get; set; }
 
         /// <summary>
-        /// Instanciates an empty instance of the QueryException.
+        /// Instantiates an empty instance of the QueryException.
         /// </summary>
         public FramePayloadQueryReplyException()
         {
@@ -21,7 +21,7 @@ namespace NTDLS.StreamFraming.Payloads.Concrete
         }
 
         /// <summary>
-        /// Instanciates an instance of the QueryException.
+        /// Instantiates an instance of the QueryException.
         /// </summary>
         /// <param name="ex"></param>
         public FramePayloadQueryReplyException(Exception ex)

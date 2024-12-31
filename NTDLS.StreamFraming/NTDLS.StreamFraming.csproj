@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
     <Title>NTDLS.StreamFraming</Title>
     <Authors>NetworkDLS</Authors>
     <Nullable>Enable</Nullable>
@@ -14,7 +14,7 @@
     <PackageReleaseNotes>
       Dependency updates.
     </PackageReleaseNotes>
-    <Version>1.2.8</Version>
+    <Version>1.2.9</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageTags>stream;framing;tcpip;io;</PackageTags>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>

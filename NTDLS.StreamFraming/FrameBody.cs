@@ -7,7 +7,7 @@ using System.Text;
 namespace NTDLS.StreamFraming
 {
     /// <summary>
-    /// Comprises the bosy of the frame. Contains the payload and all information needed to deserialize it.
+    /// Comprises the body of the frame. Contains the payload and all information needed to deserialize it.
     /// </summary>
     [Serializable]
     [ProtoContract]
@@ -26,23 +26,26 @@ namespace NTDLS.StreamFraming
         public string ObjectType { get; set; } = string.Empty;
 
         /// <summary>
-        /// Sometimes we just need to send a byte array without all the overhead of json, thats when we use BytesPayload.
+        /// Sometimes we just need to send a byte array without all the overhead of json, that's when we use BytesPayload.
         /// </summary>
         [ProtoMember(3)]
         public byte[] Bytes { get; set; } = Array.Empty<byte>();
 
         /// <summary>
-        /// Instanciates a frame payload with a serialized payload.
+        /// Instantiates a frame payload with a serialized payload.
         /// </summary>
         /// <param name="framePayload"></param>
         public FrameBody(IFramePayload framePayload)
         {
-            ObjectType = framePayload.GetType()?.AssemblyQualifiedName ?? string.Empty;
+            var assemblyQualifiedName = framePayload.GetType()?.AssemblyQualifiedName ?? string.Empty;
+            var parts = assemblyQualifiedName.Split(','); //We only want the first two parts, not the version and such.
+            ObjectType = parts.Length > 1 ? $"{parts[0]},{parts[1].Trim()}" : assemblyQualifiedName;
+
             Bytes = Encoding.UTF8.GetBytes(Utility.JsonSerialize(framePayload));
         }
 
         /// <summary>
-        /// Instanciates a frame payload using a raw byte array.
+        /// Instantiates a frame payload using a raw byte array.
         /// </summary>
         /// <param name="bytesPayload"></param>
         public FrameBody(byte[] bytesPayload)
@@ -52,7 +55,7 @@ namespace NTDLS.StreamFraming
         }
 
         /// <summary>
-        /// Instanciates a frame payload.
+        /// Instantiates a frame payload.
         /// </summary>
         public FrameBody()
         {
