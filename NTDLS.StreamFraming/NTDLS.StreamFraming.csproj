@@ -14,7 +14,7 @@
     <PackageReleaseNotes>
       Dependency updates.
     </PackageReleaseNotes>
-    <Version>1.2.9</Version>
+    <Version>1.2.10</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageTags>stream;framing;tcpip;io;</PackageTags>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
@@ -43,7 +43,7 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="NTDLS.Semaphore" Version="3.4.9" />
+    <PackageReference Include="NTDLS.Semaphore" Version="3.4.11" />
     <PackageReference Include="protobuf-net" Version="3.2.45" />
   </ItemGroup>
 
